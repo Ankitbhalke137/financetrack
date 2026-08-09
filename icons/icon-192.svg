@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d0d15"/>
+      <stop offset="50%" style="stop-color:#13131b"/>
+      <stop offset="100%" style="stop-color:#1f1f27"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#c0c1ff"/>
+      <stop offset="100%" style="stop-color:#8083ff"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Full bleed background -->
+  <rect width="192" height="192" fill="url(#bgGrad)"/>
+  
+  <!-- Decorative -->
+  <circle cx="40" cy="40" r="80" fill="#c0c1ff" opacity="0.04"/>
+  <circle cx="152" cy="152" r="100" fill="#4edea3" opacity="0.04"/>
+  
+  <!-- Circle -->
+  <circle cx="96" cy="85" r="55" fill="none" stroke="url(#accentGrad)" stroke-width="4" filter="url(#glow)"/>
+  
+  <!-- Rupee -->
+  <text x="96" y="105" font-family="Arial, sans-serif" font-size="52" font-weight="bold" fill="url(#accentGrad)" text-anchor="middle" filter="url(#glow)">₹</text>
+  
+  <!-- Arrow -->
+  <path d="M50 145 Q70 130 90 138 T140 118" fill="none" stroke="#4edea3" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="140,118 148,110 140,126" fill="#4edea3"/>
+  
+  <!-- Text -->
+  <text x="96" y="175" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#4edea3" text-anchor="middle" letter-spacing="3">FT</text>
+</svg>
