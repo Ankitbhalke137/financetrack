@@ -15,6 +15,14 @@ let selectedCategory = 'Food';
 let filteredTransactions = [];
 let currentFilter = 'all';
 let searchQuery = '';
+let filterCategory = '';
+let filterPayer = '';
+let filterMonth = '';
+let filterFrom = '';
+let filterTo = '';
+let filterMin = '';
+let filterMax = '';
+let sortBy = 'date-desc';
 let editingTxnId = null;
 let friendTransactions = [];
 let friendTxnType = 'lent';
@@ -233,11 +241,67 @@ function applyFilters() {
         } else if (currentFilter === 'expense') {
             matchesFilter = txn.Type === 'Expense';
         }
+        if (!matchesFilter) return false;
         
-        return matchesSearch && matchesFilter;
+        // Advanced filters
+        if (filterCategory && txn.Category !== filterCategory) return false;
+        if (filterPayer && getPayer(txn) !== filterPayer) return false;
+        if (filterMonth && !txn.Date.startsWith(filterMonth)) return false;
+        if (filterFrom && txn.Date < filterFrom) return false;
+        if (filterTo && txn.Date > filterTo) return false;
+        const amount = parseFloat(txn.Amount);
+        if (filterMin !== '' && amount < parseFloat(filterMin)) return false;
+        if (filterMax !== '' && amount > parseFloat(filterMax)) return false;
+        
+        return true;
     });
     
     renderTransactions();
+    updateSummary();
+}
+
+function getPayer(txn) {
+    if (!txn.Notes) return '(no notes)';
+    const name = txn.Notes.split(' via ')[0].trim();
+    return name ? name.substring(0, 40) : '(no notes)';
+}
+
+function populateFilterOptions() {
+    const categories = [...new Set(transactions.map(t => t.Category))];
+    const payers = [...new Set(transactions.map(t => getPayer(t)))].sort((a, b) => a.localeCompare(b));
+    const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+    
+    const catSel = document.getElementById('filter-category');
+    const currentCat = catSel.value;
+    catSel.innerHTML = '<option value="">Category: All</option>' + categories.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+    catSel.value = categories.includes(currentCat) ? currentCat : '';
+    
+    const paySel = document.getElementById('filter-payer');
+    const currentPayer = paySel.value;
+    paySel.innerHTML = '<option value="">Payer/Payee: All</option>' + payers.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
+    paySel.value = payers.includes(currentPayer) ? currentPayer : '';
+}
+
+function handleAdvancedFilter() {
+    filterCategory = document.getElementById('filter-category').value;
+    filterPayer = document.getElementById('filter-payer').value;
+    filterMonth = document.getElementById('filter-month').value;
+    filterFrom = document.getElementById('filter-from').value;
+    filterTo = document.getElementById('filter-to').value;
+    filterMin = document.getElementById('filter-min').value;
+    filterMax = document.getElementById('filter-max').value;
+    sortBy = document.getElementById('filter-sort').value;
+    applyFilters();
+}
+
+function clearAdvancedFilters() {
+    ['filter-category', 'filter-payer', 'filter-month', 'filter-from', 'filter-to', 'filter-min', 'filter-max', 'filter-sort'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
+    document.getElementById('filter-sort').value = 'date-desc';
+    filterCategory = filterPayer = filterMonth = filterFrom = filterTo = filterMin = filterMax = '';
+    sortBy = 'date-desc';
+    setFilter('all');
 }
 
 // ===========================
@@ -245,7 +309,7 @@ function applyFilters() {
 // ===========================
 function updateSummary() {
     let income = 0, expense = 0;
-    transactions.forEach(txn => {
+    filteredTransactions.forEach(txn => {
         if (txn.Type === 'Income') income += parseFloat(txn.Amount);
         else expense += parseFloat(txn.Amount);
     });
@@ -320,6 +384,7 @@ async function loadTransactions() {
         transactions = data.transactions || [];
         filteredTransactions = [...transactions];
         applyFilters();
+        populateFilterOptions();
         updateSummary();
     } catch (error) {
         console.error('Error loading transactions:', error);
@@ -332,7 +397,13 @@ function renderTransactions() {
         container.innerHTML = '<p class="text-center text-on-surface-variant py-8">No transactions found.</p>';
         return;
     }
-    const sorted = [...filteredTransactions].sort((a, b) => new Date(b.Date) - new Date(a.Date));
+    const sorted = [...filteredTransactions].sort((a, b) => {
+        if (sortBy === 'date-asc') return new Date(a.Date) - new Date(b.Date);
+        if (sortBy === 'amount-desc') return parseFloat(b.Amount) - parseFloat(a.Amount);
+        if (sortBy === 'amount-asc') return parseFloat(a.Amount) - parseFloat(b.Amount);
+        if (sortBy === 'category-asc') return String(a.Category).localeCompare(String(b.Category));
+        return new Date(b.Date) - new Date(a.Date);
+    });
     container.innerHTML = sorted.map(txn => {
         const icon = categoryIcons[txn.Category] || 'receipt_long';
         const isIncome = txn.Type === 'Income';

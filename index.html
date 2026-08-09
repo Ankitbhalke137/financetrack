@@ -213,6 +213,36 @@
                 <button onclick="setFilter('expense')" data-filter="expense" class="filter-btn px-4 py-2 rounded-full font-label text-label-md border border-outline-variant text-on-surface-variant hover:bg-surface-variant/50 whitespace-nowrap">Expense</button>
             </div>
 
+            <!-- Advanced Filters -->
+            <div class="glass-card rounded-xl p-4 flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                    <span class="font-label text-label-caps text-on-surface-variant uppercase tracking-wider">Filters &amp; Sort</span>
+                    <button onclick="clearAdvancedFilters()" class="font-label text-label-md text-primary flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">restart_alt</span> Reset
+                    </button>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <select id="filter-category" onchange="handleAdvancedFilter()" class="bg-transparent border border-outline-variant rounded-full px-4 h-10 font-body text-body-md text-on-surface outline-none">
+                        <option value="">Category: All</option>
+                    </select>
+                    <select id="filter-payer" onchange="handleAdvancedFilter()" class="bg-transparent border border-outline-variant rounded-full px-4 h-10 font-body text-body-md text-on-surface outline-none">
+                        <option value="">Payer/Payee: All</option>
+                    </select>
+                    <select id="filter-sort" onchange="handleAdvancedFilter()" class="bg-transparent border border-outline-variant rounded-full px-4 h-10 font-body text-body-md text-on-surface outline-none">
+                        <option value="date-desc">Sort: Newest first</option>
+                        <option value="date-asc">Sort: Oldest first</option>
+                        <option value="amount-desc">Sort: Amount high to low</option>
+                        <option value="amount-asc">Sort: Amount low to high</option>
+                        <option value="category-asc">Sort: Category A-Z</option>
+                    </select>
+                    <input type="month" id="filter-month" onchange="handleAdvancedFilter()" class="bg-transparent border border-outline-variant rounded-full px-4 h-10 font-body text-body-md text-on-surface outline-none">
+                    <input type="date" id="filter-from" onchange="handleAdvancedFilter()" class="bg-transparent border border-outline-variant rounded-full px-4 h-10 font-body text-body-md text-on-surface outline-none">
+                    <input type="date" id="filter-to" onchange="handleAdvancedFilter()" class="bg-transparent border border-outline-variant rounded-full px-4 h-10 font-body text-body-md text-on-surface outline-none">
+                    <input type="number" id="filter-min" placeholder="Min amount" oninput="handleAdvancedFilter()" class="bg-transparent border border-outline-variant rounded-full px-4 h-10 font-body text-body-md text-on-surface outline-none">
+                    <input type="number" id="filter-max" placeholder="Max amount" oninput="handleAdvancedFilter()" class="bg-transparent border border-outline-variant rounded-full px-4 h-10 font-body text-body-md text-on-surface outline-none">
+                </div>
+            </div>
+
             <!-- Transactions -->
             <section class="flex flex-col gap-4">
                 <div class="flex justify-between items-center">
