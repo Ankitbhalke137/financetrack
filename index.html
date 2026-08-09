@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinanceTrack</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+              "surface-variant": "#34343d",
+              "on-background": "#e4e1ed",
+              "on-error-container": "#ffdad6",
+              "tertiary": "#ffb2b7",
+              "primary-container": "#8083ff",
+              "primary-fixed": "#e1e0ff",
+              "secondary": "#4edea3",
+              "primary": "#c0c1ff",
+              "on-error": "#690005",
+              "outline-variant": "#464554",
+              "surface-tint": "#c0c1ff",
+              "inverse-primary": "#494bd6",
+              "surface-container-low": "#1b1b23",
+              "surface-container-lowest": "#0d0d15",
+              "surface-dim": "#13131b",
+              "background": "#13131b",
+              "on-primary": "#1000a9",
+              "surface-container-highest": "#34343d",
+              "inverse-surface": "#e4e1ed",
+              "primary-fixed-dim": "#c0c1ff",
+              "surface": "#13131b",
+              "error-container": "#93000a",
+              "surface-container-high": "#292932",
+              "secondary-fixed-dim": "#4edea3",
+              "outline": "#908fa0",
+              "on-surface-variant": "#c7c4d7",
+              "inverse-on-surface": "#303038",
+              "surface-bright": "#393841",
+              "error": "#ffb4ab",
+              "on-surface": "#e4e1ed",
+              "tertiary-container": "#ff516a",
+              "surface-container": "#1f1f27",
+              "secondary-container": "#00a572"
+            },
+            "spacing": {
+              "container-padding-mobile": "20px",
+              "container-padding-desktop": "40px",
+              "gutter": "24px",
+              "card-gap": "24px"
+            },
+            "fontFamily": {
+              "body": ["Manrope"],
+              "label": ["Geist"],
+              "headline": ["Geist"],
+              "display": ["Geist"]
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      .glass-card {
+        background-color: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(12px);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      }
+      .glow-active { box-shadow: 0 0 20px rgba(192, 193, 255, 0.15); }
+      .btn-primary {
+        background-color: #c0c1ff;
+        color: #1000a9;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+      }
+      .btn-primary:hover { box-shadow: 0 0 15px rgba(192, 193, 255, 0.3); }
+      ::-webkit-scrollbar { width: 6px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
+      .toggle-checkbox:checked { right: 0; border-color: #c0c1ff; }
+      .toggle-checkbox:checked + .toggle-label { background-color: #c0c1ff; }
+      .toggle-checkbox:checked + .toggle-label:after { transform: translateX(100%); border-color: white; }
+      @keyframes dash { to { stroke-dashoffset: 0; } }
+      .animate-chart-line { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: dash 2s ease-out forwards; }
+      
+      /* Light Mode */
+      html:not(.dark) body { background-color: #f5f5f5; color: #1a1a2e; }
+      html:not(.dark) .glass-card { background-color: rgba(255, 255, 255, 0.8); border: 1px solid rgba(0, 0, 0, 0.08); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); }
+      html:not(.dark) .bg-background { background-color: #f5f5f5; }
+      html:not(.dark) .bg-surface-container { background-color: #ffffff; }
+      html:not(.dark) .bg-surface-container-lowest { background-color: #ffffff; }
+      html:not(.dark) .bg-surface-container-low { background-color: #f0f0f5; }
+      html:not(.dark) .bg-surface-container-high { background-color: #e8e8f0; }
+      html:not(.dark) .bg-surface-container-highest { background-color: #d8d8e5; }
+      html:not(.dark) .text-on-background { color: #1a1a2e; }
+      html:not(.dark) .text-on-surface { color: #1a1a2e; }
+      html:not(.dark) .text-on-surface-variant { color: #666; }
+      html:not(.dark) .border-white\/10 { border-color: rgba(0, 0, 0, 0.1); }
+      html:not(.dark) .border-white\/5 { border-color: rgba(0, 0, 0, 0.05); }
+      html:not(.dark) .border-outline-variant { border-color: rgba(0, 0, 0, 0.15); }
+      html:not(.dark) .bg-primary { background-color: #4648d4; color: white; }
+      html:not(.dark) .text-primary { color: #4648d4; }
+      html:not(.dark) .text-secondary { color: #00a572; }
+      html:not(.dark) .text-error { color: #d32f2f; }
+      html:not(.dark) .bg-error-container { background-color: #ffebee; color: #c62828; }
+      html:not(.dark) nav { background-color: rgba(255, 255, 255, 0.9); }
+      html:not(.dark) header { background-color: rgba(255, 255, 255, 0.9); }
+      html:not(.dark) .toggle-checkbox + .toggle-label { background-color: #d8d8e5; }
+      html:not(.dark) .toggle-checkbox:checked + .toggle-label { background-color: #4648d4; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen font-body overflow-x-hidden">
+
+<!-- ==================== LOGIN SCREEN ==================== -->
+<div id="login-screen" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/5 blur-[120px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-secondary/5 blur-[120px]"></div>
+    </div>
+    <div class="relative z-10 w-full max-w-md">
+        <div class="flex items-center justify-center mb-8">
+            <span class="material-symbols-outlined text-primary text-5xl mr-2" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+            <h1 class="font-display text-headline-lg font-bold text-primary tracking-tight">FinanceTrack</h1>
+        </div>
+        <div class="glass-card rounded-xl p-8 flex flex-col items-center text-center">
+            <div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6 glow-active">
+                <span class="material-symbols-outlined text-primary text-4xl">shield_lock</span>
+            </div>
+            <h2 class="font-headline text-headline-lg-mobile text-on-background mb-3">Welcome Back</h2>
+            <p class="font-body text-body-md text-on-surface-variant mb-8">Sign in to track your finances securely.</p>
+            <div id="g_id_onload" data-client_id="925818454032-ntv3o38j9as920n8c2t90rofd9s0hb54.apps.googleusercontent.com" data-callback="handleCredentialResponse"></div>
+            <div class="g_id_signin" data-type="standard" data-width="300"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MAIN APP ==================== -->
+<div id="app-screen" class="min-h-screen hidden flex flex-col">
+    <!-- TopAppBar -->
+    <header class="bg-background/80 backdrop-blur-xl fixed top-0 w-full border-b border-white/10 shadow-[0_20px_50px_rgba(73,75,214,0.15)] flex justify-between items-center px-5 h-16 z-40">
+        <div class="flex items-center gap-3">
+            <img id="user-pic" class="w-8 h-8 rounded-full object-cover border border-white/20" src="https://ui-avatars.com/api/?name=U&background=c0c1ff&color=1000a9" alt="Profile">
+            <span class="font-headline text-headline-sm font-bold text-primary hidden md:block">FinanceTrack</span>
+        </div>
+        <nav class="hidden md:flex gap-6">
+            <button onclick="showPage('home')" class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2 font-label text-label-md">
+                <span class="material-symbols-outlined">home</span> Home
+            </button>
+            <button onclick="showPage('friends')" class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2 font-label text-label-md">
+                <span class="material-symbols-outlined">group</span> Friends
+            </button>
+            <button onclick="openModal()" class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2 font-label text-label-md">
+                <span class="material-symbols-outlined">add_circle</span> Add
+            </button>
+            <button onclick="showPage('stats')" class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2 font-label text-label-md">
+                <span class="material-symbols-outlined">leaderboard</span> Stats
+            </button>
+            <button onclick="showPage('settings')" class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2 font-label text-label-md">
+                <span class="material-symbols-outlined">settings</span> Settings
+            </button>
+        </nav>
+        <button onclick="handleLogout()" class="text-primary hover:opacity-80 transition-opacity p-2">
+            <span class="material-symbols-outlined">logout</span>
+        </button>
+    </header>
+
+    <!-- HOME PAGE -->
+    <div id="home-content" class="flex-1 pt-20 pb-24 md:pb-8">
+        <main class="max-w-7xl mx-auto px-5 md:px-10 mt-4 flex flex-col gap-8">
+            <!-- Balance -->
+            <section class="glass-card rounded-xl p-6 md:p-8 relative overflow-hidden group">
+                <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all duration-700"></div>
+                <div class="relative z-10">
+                    <span class="font-label text-label-md text-on-surface-variant uppercase tracking-wider">Total Balance</span>
+                    <h1 id="total-balance" class="font-display text-display-lg text-on-background mt-2">₹0</h1>
+                    <div class="flex gap-4 mt-4">
+                        <div class="glass-card p-3 rounded-lg">
+                            <span class="font-label text-label-md text-secondary">Income</span>
+                            <div id="total-income" class="font-headline text-headline-sm text-secondary">₹0</div>
+                        </div>
+                        <div class="glass-card p-3 rounded-lg">
+                            <span class="font-label text-label-md text-error">Expenses</span>
+                            <div id="total-expense" class="font-headline text-headline-sm text-error">₹0</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Search -->
+            <div class="glass-card rounded-lg px-4 h-12 flex items-center gap-3">
+                <span class="material-symbols-outlined text-outline">search</span>
+                <input type="text" oninput="handleSearch(event)" placeholder="Search transactions..." class="bg-transparent border-none outline-none font-body text-body-md text-on-surface flex-1">
+            </div>
+
+            <!-- Filters -->
+            <div class="flex gap-2 overflow-x-auto pb-2">
+                <button onclick="setFilter('all')" data-filter="all" class="filter-btn px-4 py-2 rounded-full font-label text-label-md bg-primary/10 text-primary border border-primary/30 whitespace-nowrap">All</button>
+                <button onclick="setFilter('today')" data-filter="today" class="filter-btn px-4 py-2 rounded-full font-label text-label-md border border-outline-variant text-on-surface-variant hover:bg-surface-variant/50 whitespace-nowrap">Today</button>
+                <button onclick="setFilter('week')" data-filter="week" class="filter-btn px-4 py-2 rounded-full font-label text-label-md border border-outline-variant text-on-surface-variant hover:bg-surface-variant/50 whitespace-nowrap">This Week</button>
+                <button onclick="setFilter('month')" data-filter="month" class="filter-btn px-4 py-2 rounded-full font-label text-label-md border border-outline-variant text-on-surface-variant hover:bg-surface-variant/50 whitespace-nowrap">This Month</button>
+                <button onclick="setFilter('income')" data-filter="income" class="filter-btn px-4 py-2 rounded-full font-label text-label-md border border-outline-variant text-on-surface-variant hover:bg-surface-variant/50 whitespace-nowrap">Income</button>
+                <button onclick="setFilter('expense')" data-filter="expense" class="filter-btn px-4 py-2 rounded-full font-label text-label-md border border-outline-variant text-on-surface-variant hover:bg-surface-variant/50 whitespace-nowrap">Expense</button>
+            </div>
+
+            <!-- Transactions -->
+            <section class="flex flex-col gap-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="font-headline text-headline-sm text-on-background">Recent Activity</h2>
+                    <span id="txn-count" class="font-label text-label-md text-on-surface-variant">0 transactions</span>
+                </div>
+                <div id="transactions" class="flex flex-col gap-3">
+                    <p class="text-center text-on-surface-variant py-8 glass-card rounded-xl">No transactions yet. Add one!</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- FRIENDS PAGE -->
+    <div id="friends-content" class="flex-1 pt-20 pb-24 md:pb-8 hidden">
+        <main class="max-w-7xl mx-auto px-5 md:px-10 mt-4 flex flex-col gap-8">
+            <section class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+                <div>
+                    <h2 class="font-display text-headline-lg text-on-background">Friends</h2>
+                    <p class="font-body text-body-sm text-on-surface-variant">Track shared expenses and settle balances.</p>
+                </div>
+                <button onclick="openFriendModal()" class="btn-primary font-label text-label-md py-3 px-6 rounded-full flex items-center gap-2 active:scale-95">
+                    <span class="material-symbols-outlined">person_add</span> Add Friend
+                </button>
+            </section>
+
+            <!-- Summary -->
+            <section class="glass-card rounded-xl p-6 relative overflow-hidden group">
+                <div class="absolute -top-24 -right-24 w-64 h-64 bg-secondary/10 rounded-full blur-3xl"></div>
+                <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div>
+                        <span class="font-label text-label-md text-on-surface-variant uppercase tracking-wider">Net Friend Balance</span>
+                        <div class="flex items-baseline gap-3 mt-2">
+                            <span id="friends-net" class="font-display text-headline-lg text-secondary">+₹0</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="glass-card p-4 rounded-lg">
+                            <span class="font-label text-label-md text-on-surface-variant">You Owe</span>
+                            <div id="friends-you-owe" class="font-headline text-headline-sm text-error">₹0</div>
+                        </div>
+                        <div class="glass-card p-4 rounded-lg">
+                            <span class="font-label text-label-md text-on-surface-variant">They Owe You</span>
+                            <div id="friends-get-back" class="font-headline text-headline-sm text-secondary">₹0</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Friends List -->
+            <section class="flex flex-col gap-4">
+                <h3 class="font-headline text-headline-sm text-on-background">Balances</h3>
+                <div id="friends-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <p class="text-center text-on-surface-variant py-8 glass-card rounded-xl col-span-full">No friend transactions yet.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- STATS PAGE -->
+    <div id="stats-content" class="flex-1 pt-20 pb-24 md:pb-8 hidden">
+        <main class="max-w-7xl mx-auto px-5 md:px-10 mt-4 flex flex-col gap-8">
+            <div>
+                <h1 class="font-display text-display-lg text-on-background">Analytics</h1>
+                <p class="font-body text-body-lg text-on-surface-variant mt-2">Your financial performance.</p>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div class="glass-card rounded-xl p-6 relative overflow-hidden group">
+                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl"></div>
+                    <span class="font-label text-label-md text-on-surface-variant uppercase tracking-wider">Total Transactions</span>
+                    <div id="stats-total" class="font-display text-display-lg text-on-background mt-4">0</div>
+                </div>
+                <div class="glass-card rounded-xl p-6 relative overflow-hidden group">
+                    <div class="absolute -left-4 -bottom-4 w-24 h-24 bg-secondary/10 rounded-full blur-2xl"></div>
+                    <span class="font-label text-label-md text-on-surface-variant uppercase tracking-wider">Days Active</span>
+                    <div id="stats-days" class="font-display text-display-lg text-on-background mt-4">0</div>
+                </div>
+            </div>
+
+            <!-- Income vs Expense -->
+            <div class="glass-card rounded-xl p-6">
+                <h3 class="font-headline text-headline-sm text-on-background border-b border-white/5 pb-4 mb-4">Income vs Expenses</h3>
+                <div class="flex gap-6">
+                    <div class="flex-1">
+                        <span class="font-label text-label-md text-secondary">Income</span>
+                        <div id="stats-income" class="font-headline text-headline-md text-secondary">₹0</div>
+                    </div>
+                    <div class="flex-1">
+                        <span class="font-label text-label-md text-error">Expenses</span>
+                        <div id="stats-expense" class="font-headline text-headline-md text-error">₹0</div>
+                    </div>
+                </div>
+                <div class="mt-4 w-full h-3 bg-surface-container-highest rounded-full overflow-hidden">
+                    <div id="stats-bar" class="h-full bg-gradient-to-r from-secondary to-primary rounded-full transition-all duration-500" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <!-- Category Breakdown -->
+            <div class="glass-card rounded-xl p-6">
+                <h3 class="font-headline text-headline-sm text-on-background border-b border-white/5 pb-4 mb-4">By Category</h3>
+                <div id="category-stats" class="flex flex-col gap-4">
+                    <p class="text-on-surface-variant text-center py-4">No expense data yet</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- SETTINGS PAGE -->
+    <div id="settings-content" class="flex-1 pt-20 pb-24 md:pb-8 hidden">
+        <main class="max-w-4xl mx-auto px-5 md:px-10 mt-4 flex flex-col gap-8">
+            <div>
+                <h2 class="font-headline text-headline-lg text-on-background">Settings</h2>
+                <p class="font-body text-body-sm text-on-surface-variant">Manage your account and preferences.</p>
+            </div>
+
+            <!-- Profile -->
+            <section class="glass-card rounded-2xl p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div class="flex items-center gap-6">
+                    <img id="settings-pic" class="w-20 h-20 rounded-full object-cover border-2 border-primary/30" src="https://ui-avatars.com/api/?name=U&background=c0c1ff&color=1000a9" alt="Profile">
+                    <div>
+                        <h3 id="settings-name" class="font-headline text-headline-sm text-on-background">User</h3>
+                        <p id="settings-email" class="font-body text-body-md text-on-surface-variant">user@gmail.com</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Preferences -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="flex flex-col gap-4">
+                    <h3 class="font-headline text-headline-sm text-on-background border-b border-white/10 pb-4">Preferences</h3>
+                    <div class="glass-card rounded-xl p-4 flex justify-between items-center">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
+                                <span class="material-symbols-outlined text-primary">dark_mode</span>
+                            </div>
+                            <div>
+                                <p class="font-body text-body-md text-on-background">Theme</p>
+                                <p id="theme-label" class="font-body text-body-sm text-on-surface-variant">Dark Mode</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input id="dark-mode-toggle" type="checkbox" onchange="toggleTheme()" class="sr-only peer">
+                            <div class="w-12 h-6 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary border border-white/10"></div>
+                        </label>
+                    </div>
+                    <div class="glass-card rounded-xl p-4 flex justify-between items-center cursor-pointer hover:bg-surface-variant/50 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
+                                <span class="material-symbols-outlined text-on-surface-variant">notifications_active</span>
+                            </div>
+                            <div>
+                                <p class="font-body text-body-md text-on-background">Notifications</p>
+                                <p class="font-body text-body-sm text-on-surface-variant">Alerts and updates</p>
+                            </div>
+                        </div>
+                        <span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-4">
+                    <h3 class="font-headline text-headline-sm text-on-background border-b border-white/10 pb-4">Data & Actions</h3>
+                    <div class="glass-card rounded-xl p-4 flex justify-between items-center cursor-pointer hover:bg-surface-variant/50 transition-colors" onclick="exportCSV()">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
+                                <span class="material-symbols-outlined text-primary">download</span>
+                            </div>
+                            <div>
+                                <p class="font-body text-body-md text-on-background">Export Data</p>
+                                <p class="font-body text-body-sm text-on-surface-variant">Download CSV</p>
+                            </div>
+                        </div>
+                        <span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+                    </div>
+                    <button onclick="handleLogout()" class="w-full glass-card hover:bg-error-container/20 border-error/30 text-error font-label text-label-md px-6 py-4 rounded-xl flex items-center justify-center gap-2 transition-colors mt-4">
+                        <span class="material-symbols-outlined">logout</span> Logout
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bottom Nav -->
+    <nav class="bg-surface-container/30 backdrop-blur-xl fixed bottom-0 w-full rounded-t-xl border-t border-white/10 shadow-[0_-10px_40px_rgba(73,75,214,0.1)] z-50 flex justify-around items-center px-2 pb-6 pt-2 md:hidden">
+        <button onclick="showPage('home')" id="nav-home" class="flex flex-col items-center justify-center text-primary active:scale-90 transition-transform w-16 h-12">
+            <span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">home</span>
+            <span class="text-[10px] font-label">Home</span>
+        </button>
+        <button onclick="showPage('friends')" id="nav-friends" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 w-16 h-12">
+            <span class="material-symbols-outlined mb-1">group</span>
+            <span class="text-[10px] font-label">Friends</span>
+        </button>
+        <button onclick="openModal()" class="flex flex-col items-center justify-center -mt-4">
+            <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-on-primary shadow-[0_0_20px_rgba(192,193,255,0.4)]">
+                <span class="material-symbols-outlined text-2xl">add</span>
+            </div>
+        </button>
+        <button onclick="showPage('stats')" id="nav-stats" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 w-16 h-12">
+            <span class="material-symbols-outlined mb-1">leaderboard</span>
+            <span class="text-[10px] font-label">Stats</span>
+        </button>
+        <button onclick="showPage('settings')" id="nav-settings" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 w-16 h-12">
+            <span class="material-symbols-outlined mb-1">settings</span>
+            <span class="text-[10px] font-label">Settings</span>
+        </button>
+    </nav>
+</div>
+
+<!-- ==================== ADD TRANSACTION MODAL ==================== -->
+<div id="modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal()"></div>
+    <div class="absolute bottom-0 left-0 w-full bg-surface-container rounded-t-3xl max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-surface-container border-b border-white/10 flex justify-between items-center px-5 h-14">
+            <button onclick="closeModal()" class="text-primary p-2 -ml-2"><span class="material-symbols-outlined">close</span></button>
+            <h1 class="font-headline text-headline-sm text-primary">Add Transaction</h1>
+            <div class="w-10"></div>
+        </div>
+        <form id="txn-form" onsubmit="addTransaction(event)" class="flex flex-col p-5 gap-6 pb-24">
+            <div class="flex bg-surface-container-low rounded-lg p-1 gap-1 border border-white/10">
+                <button type="button" onclick="setType('Income')" id="type-income" class="flex-1 py-2 font-label text-label-md text-on-surface-variant text-center rounded">Income</button>
+                <button type="button" onclick="setType('Expense')" id="type-expense" class="flex-1 py-2 font-label text-label-md bg-surface-container-highest text-primary rounded shadow-sm text-center">Expense</button>
+            </div>
+            <input type="hidden" id="txn-type" value="Expense">
+            <div class="flex flex-col items-center py-4">
+                <span class="font-label text-label-md text-on-surface-variant">Amount</span>
+                <div class="flex items-center mt-2">
+                    <span class="font-headline text-headline-md text-on-surface mr-1">₹</span>
+                    <input id="txn-amount" type="number" min="1" required class="bg-transparent border-none outline-none font-display text-display-lg text-center text-on-surface w-40" placeholder="0">
+                </div>
+            </div>
+            <div class="grid grid-cols-4 gap-3">
+                <button type="button" onclick="setCategory('Food')" data-cat="Food" class="category-btn flex flex-col items-center gap-2 p-3 rounded-xl bg-surface-container-lowest border border-white/10 text-on-surface-variant hover:text-primary transition-all">
+                    <span class="material-symbols-outlined">restaurant</span>
+                    <span class="font-label text-[10px]">Food</span>
+                </button>
+                <button type="button" onclick="setCategory('Transport')" data-cat="Transport" class="category-btn flex flex-col items-center gap-2 p-3 rounded-xl bg-surface-container-lowest border border-white/10 text-on-surface-variant hover:text-primary transition-all">
+                    <span class="material-symbols-outlined">directions_car</span>
+                    <span class="font-label text-[10px]">Transport</span>
+                </button>
+                <button type="button" onclick="setCategory('Shopping')" data-cat="Shopping" class="category-btn flex flex-col items-center gap-2 p-3 rounded-xl bg-surface-container-lowest border border-white/10 text-on-surface-variant hover:text-primary transition-all">
+                    <span class="material-symbols-outlined">shopping_bag</span>
+                    <span class="font-label text-[10px]">Shopping</span>
+                </button>
+                <button type="button" onclick="setCategory('Bills')" data-cat="Bills" class="category-btn flex flex-col items-center gap-2 p-3 rounded-xl bg-surface-container-lowest border border-white/10 text-on-surface-variant hover:text-primary transition-all">
+                    <span class="material-symbols-outlined">receipt_long</span>
+                    <span class="font-label text-[10px]">Bills</span>
+                </button>
+                <button type="button" onclick="setCategory('Salary')" data-cat="Salary" class="category-btn flex flex-col items-center gap-2 p-3 rounded-xl bg-surface-container-lowest border border-white/10 text-on-surface-variant hover:text-primary transition-all">
+                    <span class="material-symbols-outlined">work</span>
+                    <span class="font-label text-[10px]">Salary</span>
+                </button>
+                <button type="button" onclick="setCategory('Health')" data-cat="Health" class="category-btn flex flex-col items-center gap-2 p-3 rounded-xl bg-surface-container-lowest border border-white/10 text-on-surface-variant hover:text-primary transition-all">
+                    <span class="material-symbols-outlined">health_and_safety</span>
+                    <span class="font-label text-[10px]">Health</span>
+                </button>
+                <button type="button" onclick="setCategory('Entertainment')" data-cat="Entertainment" class="category-btn flex flex-col items-center gap-2 p-3 rounded-xl bg-surface-container-lowest border border-white/10 text-on-surface-variant hover:text-primary transition-all">
+                    <span class="material-symbols-outlined">movie</span>
+                    <span class="font-label text-[10px]">Ent.</span>
+                </button>
+                <button type="button" onclick="setCategory('Other')" data-cat="Other" class="category-btn flex flex-col items-center gap-2 p-3 rounded-xl bg-surface-container-lowest border border-white/10 text-on-surface-variant hover:text-primary transition-all">
+                    <span class="material-symbols-outlined">more_horiz</span>
+                    <span class="font-label text-[10px]">Other</span>
+                </button>
+            </div>
+            <div class="flex flex-col gap-3">
+                <div class="flex items-center bg-surface-container-lowest border border-white/10 rounded-lg px-3 h-12 gap-3">
+                    <span class="material-symbols-outlined text-outline">calendar_today</span>
+                    <input id="txn-date" type="date" required class="bg-transparent border-none outline-none font-body text-body-md text-on-surface flex-1">
+                </div>
+                <div class="flex items-start bg-surface-container-lowest border border-white/10 rounded-lg p-3 gap-3 min-h-16">
+                    <span class="material-symbols-outlined text-outline mt-1">notes</span>
+                    <textarea id="txn-notes" class="bg-transparent border-none outline-none font-body text-body-md text-on-surface flex-1 resize-none" placeholder="Add notes..."></textarea>
+                </div>
+            </div>
+            <div class="fixed bottom-0 left-0 w-full p-4 bg-surface-container/90 backdrop-blur-xl border-t border-white/10">
+                <button type="submit" class="w-full btn-primary font-headline text-headline-sm h-12 rounded-lg flex items-center justify-center gap-2 active:scale-95">
+                    <span class="material-symbols-outlined">sync</span> Save Transaction
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ==================== ADD FRIEND MODAL ==================== -->
+<div id="friend-modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeFriendModal()"></div>
+    <div class="absolute bottom-0 left-0 w-full bg-surface-container rounded-t-3xl max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-surface-container border-b border-white/10 flex justify-between items-center px-5 h-14">
+            <button onclick="closeFriendModal()" class="text-primary p-2 -ml-2"><span class="material-symbols-outlined">close</span></button>
+            <h1 class="font-headline text-headline-sm text-primary">Friend Transaction</h1>
+            <div class="w-10"></div>
+        </div>
+        <form id="friend-form" onsubmit="addFriendTransaction(event)" class="flex flex-col p-5 gap-6 pb-24">
+            <div class="flex items-center bg-surface-container-lowest border border-white/10 rounded-lg px-3 h-12 gap-3">
+                <span class="material-symbols-outlined text-outline">person</span>
+                <input id="friend-name" type="text" required placeholder="Friend's name" class="bg-transparent border-none outline-none font-body text-body-md text-on-surface flex-1">
+            </div>
+            <div class="flex bg-surface-container-low rounded-lg p-1 gap-1 border border-white/10">
+                <button type="button" onclick="setFriendType('lent')" id="friend-type-lent" class="flex-1 py-2 font-label text-label-md bg-surface-container-highest text-primary rounded text-center">They Borrowed</button>
+                <button type="button" onclick="setFriendType('borrowed')" id="friend-type-borrowed" class="flex-1 py-2 font-label text-label-md text-on-surface-variant text-center rounded">You Borrowed</button>
+            </div>
+            <input type="hidden" id="friend-txn-type" value="lent">
+            <div class="flex items-center justify-center py-2">
+                <span class="font-headline text-headline-md text-on-surface mr-1">₹</span>
+                <input id="friend-amount" type="number" min="1" required class="bg-transparent border-none outline-none font-display text-display-lg text-center text-on-surface w-40" placeholder="0">
+            </div>
+            <div class="flex items-center bg-surface-container-lowest border border-white/10 rounded-lg px-3 h-12 gap-3">
+                <span class="material-symbols-outlined text-outline">calendar_today</span>
+                <input id="friend-date" type="date" required class="bg-transparent border-none outline-none font-body text-body-md text-on-surface flex-1">
+            </div>
+            <div class="flex items-start bg-surface-container-lowest border border-white/10 rounded-lg p-3 gap-3 min-h-16">
+                <span class="material-symbols-outlined text-outline mt-1">notes</span>
+                <textarea id="friend-notes" class="bg-transparent border-none outline-none font-body text-body-md text-on-surface flex-1 resize-none" placeholder="e.g. Dinner, Movie..."></textarea>
+            </div>
+            <div class="fixed bottom-0 left-0 w-full p-4 bg-surface-container/90 backdrop-blur-xl border-t border-white/10">
+                <button type="submit" class="w-full btn-primary font-headline text-headline-sm h-12 rounded-lg flex items-center justify-center gap-2 active:scale-95">
+                    <span class="material-symbols-outlined">save</span> Save Transaction
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="app.js?v=3"></script>
+</body>
+</html>

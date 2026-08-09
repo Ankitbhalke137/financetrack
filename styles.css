@@ -1,0 +1,26 @@
+/* Minimal custom styles - Tailwind handles most styling */
+body {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.bg-primary-gradient {
+    background: linear-gradient(135deg, #6063ee 0%, #c0c1ff 100%);
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Material Icons fill */
+.material-symbols-outlined {
+    font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24;
+}
