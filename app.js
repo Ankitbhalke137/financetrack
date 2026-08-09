@@ -410,7 +410,7 @@ const categoryIcons = {
     'Food': 'restaurant', 'Transport': 'directions_car', 'Shopping': 'shopping_bag',
     'Bills': 'receipt_long', 'Salary': 'work', 'Health': 'health_and_safety',
     'Entertainment': 'movie', 'Other': 'more_horiz', 'Father Medicine': 'medication',
-    'Vending Machine': 'vending_machine'
+    'Vending Machine': 'storefront'
 };
 
 async function loadTransactions() {
@@ -420,7 +420,7 @@ async function loadTransactions() {
             body: JSON.stringify({ action: 'getTransactions' })
         });
         const data = await response.json();
-        transactions = data.transactions || [];
+        transactions = (data.transactions || []).map(t => ({ ...t, Date: ((t.Date || '').toString() || new Date().toISOString().split('T')[0]).split('T')[0] }));
         filteredTransactions = [...transactions];
         applyFilters();
         populateFilterOptions();
