@@ -409,7 +409,8 @@ function updateStats() {
 const categoryIcons = {
     'Food': 'restaurant', 'Transport': 'directions_car', 'Shopping': 'shopping_bag',
     'Bills': 'receipt_long', 'Salary': 'work', 'Health': 'health_and_safety',
-    'Entertainment': 'movie', 'Other': 'more_horiz', 'Father Medicine': 'medication'
+    'Entertainment': 'movie', 'Other': 'more_horiz', 'Father Medicine': 'medication',
+    'Vending Machine': 'vending_machine'
 };
 
 async function loadTransactions() {
