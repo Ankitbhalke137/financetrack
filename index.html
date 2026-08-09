@@ -310,6 +310,29 @@
                 <p class="font-body text-body-lg text-on-surface-variant mt-2">Your financial performance.</p>
             </div>
 
+            <!-- Stats Filter -->
+            <div class="glass-card rounded-xl p-4 flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                    <span class="font-label text-label-caps text-on-surface-variant uppercase tracking-wider">Stats Filter</span>
+                    <button onclick="clearStatsFilter()" class="font-label text-label-md text-primary flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">restart_alt</span> Reset
+                    </button>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <select id="stats-category" onchange="handleStatsFilter()" class="bg-transparent border border-outline-variant rounded-full px-3 h-10 font-body text-body-md text-on-surface outline-none w-full min-w-0">
+                        <option value="">Category: All</option>
+                    </select>
+                    <select id="stats-type" onchange="handleStatsFilter()" class="bg-transparent border border-outline-variant rounded-full px-3 h-10 font-body text-body-md text-on-surface outline-none w-full min-w-0">
+                        <option value="">Type: All</option>
+                        <option value="Expense">Expense</option>
+                        <option value="Income">Income</option>
+                    </select>
+                    <input type="month" id="stats-month" onchange="handleStatsFilter()" class="bg-transparent border border-outline-variant rounded-full px-3 h-10 font-body text-body-md text-on-surface outline-none w-full min-w-0">
+                    <input type="date" id="stats-from" onchange="handleStatsFilter()" class="bg-transparent border border-outline-variant rounded-full px-3 h-10 font-body text-body-md text-on-surface outline-none w-full min-w-0">
+                    <input type="date" id="stats-to" onchange="handleStatsFilter()" class="bg-transparent border border-outline-variant rounded-full px-3 h-10 font-body text-body-md text-on-surface outline-none w-full min-w-0">
+                </div>
+            </div>
+
             <!-- Summary Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div class="glass-card rounded-xl p-6 relative overflow-hidden group">

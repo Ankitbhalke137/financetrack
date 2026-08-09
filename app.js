@@ -24,6 +24,11 @@ let filterMin = '';
 let filterMax = '';
 let sortBy = 'date-desc';
 let editingTxnId = null;
+let statsCategory = '';
+let statsType = '';
+let statsMonth = '';
+let statsFrom = '';
+let statsTo = '';
 let friendTransactions = [];
 let friendTxnType = 'lent';
 
@@ -276,6 +281,11 @@ function populateFilterOptions() {
     catSel.innerHTML = '<option value="">Category: All</option>' + categories.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
     catSel.value = categories.includes(currentCat) ? currentCat : '';
     
+    const statsCatSel = document.getElementById('stats-category');
+    const currentStatsCat = statsCatSel.value;
+    statsCatSel.innerHTML = '<option value="">Category: All</option>' + categories.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+    statsCatSel.value = categories.includes(currentStatsCat) ? currentStatsCat : '';
+    
     const paySel = document.getElementById('filter-payer');
     const currentPayer = paySel.value;
     paySel.innerHTML = '<option value="">Payer/Payee: All</option>' + payers.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
@@ -322,11 +332,39 @@ function updateSummary() {
 // ===========================
 // STATS
 // ===========================
+function handleStatsFilter() {
+    statsCategory = document.getElementById('stats-category').value;
+    statsType = document.getElementById('stats-type').value;
+    statsMonth = document.getElementById('stats-month').value;
+    statsFrom = document.getElementById('stats-from').value;
+    statsTo = document.getElementById('stats-to').value;
+    updateStats();
+}
+
+function clearStatsFilter() {
+    statsCategory = statsType = statsMonth = statsFrom = statsTo = '';
+    document.getElementById('stats-category').value = '';
+    document.getElementById('stats-type').value = '';
+    document.getElementById('stats-month').value = '';
+    document.getElementById('stats-from').value = '';
+    document.getElementById('stats-to').value = '';
+    updateStats();
+}
+
 function updateStats() {
     let income = 0, expense = 0;
     const categoryTotals = {};
 
-    transactions.forEach(txn => {
+    const filtered = transactions.filter(txn => {
+        if (statsCategory && txn.Category !== statsCategory) return false;
+        if (statsType && txn.Type !== statsType) return false;
+        if (statsMonth && !txn.Date.startsWith(statsMonth)) return false;
+        if (statsFrom && txn.Date < statsFrom) return false;
+        if (statsTo && txn.Date > statsTo) return false;
+        return true;
+    });
+
+    filtered.forEach(txn => {
         const amount = parseFloat(txn.Amount);
         if (txn.Type === 'Income') income += amount;
         else {
@@ -337,8 +375,8 @@ function updateStats() {
 
     document.getElementById('stats-income').textContent = `₹${income.toLocaleString()}`;
     document.getElementById('stats-expense').textContent = `₹${expense.toLocaleString()}`;
-    document.getElementById('stats-total').textContent = transactions.length;
-    document.getElementById('stats-days').textContent = new Set(transactions.map(t => t.Date)).size;
+    document.getElementById('stats-total').textContent = filtered.length;
+    document.getElementById('stats-days').textContent = new Set(filtered.map(t => t.Date)).size;
 
     const total = income + expense;
     document.getElementById('stats-bar').style.width = `${total > 0 ? Math.min((income / total) * 100, 100) : 0}%`;
