@@ -1,9 +1,10 @@
 // ===========================
 // CONFIGURATION
 // ===========================
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyXE84GFzcSnw_fZeLq-_DxBaAP-5QaFlFvdC4mj1a4X-brcploZt5On1QSAPNgfCDIyg/exec';
-const GOOGLE_CLIENT_ID = '925818454032-ntv3o38j9as920n8c2t90rofd9s0hb54.apps.googleusercontent.com';
-const ALLOWED_EMAILS = ['bhalkeankit@gmail.com'];
+// Load from config.local.js if available, otherwise use defaults
+const APPS_SCRIPT_URL = typeof CONFIG !== 'undefined' ? CONFIG.APPS_SCRIPT_URL : '';
+const GOOGLE_CLIENT_ID = typeof CONFIG !== 'undefined' ? CONFIG.GOOGLE_CLIENT_ID : '';
+const ALLOWED_EMAILS = typeof CONFIG !== 'undefined' ? CONFIG.ALLOWED_EMAILS : [];
 
 // ===========================
 // STATE
