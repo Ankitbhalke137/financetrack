@@ -14,5 +14,3 @@ node_modules/
 # Logs
 *.log
 
-# API Config (contains secrets)
-config.local.js
